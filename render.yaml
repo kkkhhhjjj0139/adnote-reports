@@ -1,0 +1,15 @@
+# Render Static Sites have no compute plan and can be hosted for free.
+# Do not switch runtime to node: this app has no server process or database.
+services:
+  - type: web
+    name: adnote-reports
+    runtime: static
+    buildCommand: node --check dist/app.js
+    staticPublishPath: ./dist
+    headers:
+      - path: /*
+        name: X-Content-Type-Options
+        value: nosniff
+      - path: /*
+        name: Referrer-Policy
+        value: strict-origin-when-cross-origin
