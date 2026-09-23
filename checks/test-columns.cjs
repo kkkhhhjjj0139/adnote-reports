@@ -20,13 +20,12 @@ if (JSON.stringify(english) !== JSON.stringify(expected)) throw new Error(`Engli
 if (JSON.stringify(korean) !== JSON.stringify(expected)) throw new Error(`Korean detection failed: ${korean}`);
 
 const metrics = source.match(/const metrics=\[(.*?)\];/s)?.[1] || '';
-const labels = ['노출수', '클릭수', '클릭률', '광고비', '구매완료수', 'ROAS'];
+const labels = ['노출수', '클릭수', '클릭률', '광고비', '구매완료수', 'ROAS', '구매매출액'];
 let position = -1;
 for (const label of labels) {
   const next = metrics.indexOf(`'${label}'`, position + 1);
   if (next < 0) throw new Error(`metric order missing ${label}`);
   position = next;
 }
-if (metrics.includes("'구매완료 매출'")) throw new Error('unexpected revenue card remains');
 
 console.log(JSON.stringify({ english, korean, metrics: labels }));
