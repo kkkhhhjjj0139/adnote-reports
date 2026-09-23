@@ -21,11 +21,12 @@ const context = {
 vm.createContext(context);
 vm.runInContext(`${source.slice(start, end)}\nresult = mergeRows(existing, incoming);`, context);
 
-if (context.result.added !== 1 || context.result.updated !== 1) throw new Error('add/update counts are wrong');
-if (context.result.rows.length !== 3) throw new Error('overlap was duplicated');
+if (context.result.added !== 1 || context.result.updated !== 1 || context.result.refreshedDates !== 1) throw new Error('add/update counts are wrong');
+if (context.result.rows.length !== 2) throw new Error('same-date rows were not fully refreshed');
 const updated = context.result.rows.find(r => r.date === '2026-09-01' && r.campaign === '파워링크');
 if (updated.spend !== 12000 || updated.revenue !== 60000) throw new Error('overlap was not replaced');
+if (context.result.rows.some(r => r.date === '2026-09-01' && r.campaign === '쇼핑검색')) throw new Error('stale same-date campaign remained');
 const totalSpend = context.result.rows.reduce((sum, r) => sum + r.spend, 0);
-if (totalSpend !== 47000) throw new Error('stored totals are wrong');
+if (totalSpend !== 27000) throw new Error('stored totals are wrong');
 
 console.log(JSON.stringify({ rows: context.result.rows.length, added: context.result.added, updated: context.result.updated, totalSpend }));
